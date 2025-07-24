@@ -1,6 +1,8 @@
 import os, hashlib
 import requests
 from tqdm import tqdm
+import importlib
+
 
 URL_MAP = {
     "vgg_lpips": "https://heibox.uni-heidelberg.de/f/607503859c864bc1b30b/?dl=1"
@@ -31,6 +33,20 @@ def md5_hash(path):
     with open(path, "rb") as f:
         content = f.read()
     return hashlib.md5(content).hexdigest()
+
+
+def get_obj_from_str(string, reload=False):
+    module, cls = string.rsplit(".", 1)
+    module = importlib.import_module(module)
+    if reload:
+        importlib.reload(module)
+    return getattr(module, cls)
+
+def instantiate_from_config(config):
+    if not "target" in config:
+        raise KeyError("Expected key `target` to instantiate.")
+    return get_obj_from_str(config["target"])(**config.get("params", dict()))
+
 
 
 def get_ckpt_path(name, root, check=False):
