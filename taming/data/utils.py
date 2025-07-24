@@ -169,3 +169,19 @@ def custom_collate(batch):
         return [custom_collate(samples) for samples in transposed]
 
     raise TypeError(default_collate_err_msg_format.format(elem_type))
+
+
+import importlib
+
+def get_obj_from_str(string, reload=False):
+    module, cls = string.rsplit(".", 1)
+    module = importlib.import_module(module)
+    if reload:
+        importlib.reload(module)
+    return getattr(module, cls)
+
+def instantiate_from_config(config):
+    if not "target" in config:
+        raise KeyError("Expected key `target` to instantiate.")
+    return get_obj_from_str(config["target"])(**config.get("params", dict()))
+
