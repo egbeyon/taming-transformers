@@ -12,8 +12,10 @@ def instantiate_from_config(config):
         raise KeyError("Expected key `target` to instantiate.")
     return get_obj_from_str(config["target"])(**config.get("params", {}))
 
-# === Patch for missing get_ckpt_path ===
-def get_ckpt_path(name):
-    # Return a dummy path or raise error for now
-    raise NotImplementedError(f"Checkpoint lookup for '{name}' not implemented.")
+
+def get_ckpt_path(name, base=None):
+    print(f"[WARNING] get_ckpt_path({name}, {base}) was called. Returning dummy path or raising error.")
+    # You can either return a path or raise a clear error:
+    raise NotImplementedError("get_ckpt_path was called. Provide the required checkpoint manually.")
+
 
